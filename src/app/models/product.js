@@ -9,7 +9,7 @@ const Product = function(product){
 };
 
 
-
+// create product
 Product.create = (newProduct, result) => {
     sql.query("insert into product set ?", newProduct, (err, res) =>{
         if(err){
@@ -23,7 +23,7 @@ Product.create = (newProduct, result) => {
    
 };
 
-
+// list all product
 Product.getProduct = (name_product, result) => {
     let query = "select * from product";
     if(name_product){
@@ -40,9 +40,26 @@ Product.getProduct = (name_product, result) => {
 };
 
 
+// update product
 
+Product.updateProdut = (idproduct,product, result) => {
+    sql.query("update product set name_product = ?, price = ?, description = ? where idproduct =?",
+    [product.name_product, product.price, product.description, idproduct],
+    (err, res) => {
+        if(err) {
+            console.log("error: ", err);
+            result(null, err);
+        }
 
-
+        if(res.affectedRows == 0){
+            // not found user with the id
+            result({kind: "not_found"}, null);
+            return;
+        }
+        console.log("update product: ", {idproduct: idproduct, ...product});
+        result(null, {idproduct: idproduct, product});
+    });
+};
 
 
 module.exports = Product;
